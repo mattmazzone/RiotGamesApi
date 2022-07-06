@@ -54,6 +54,9 @@ namespace LeagueWinForm.Forms
             var currentUser = JsonConvert.DeserializeObject<User>(content, settings);
 
 
+            var flag = new Form1();
+            flag.setLoggedIn(true);
+
            /* childForm.TopLevel = false;
             childForm.FormBorderStyle = FormBorderStyle.None;
             childForm.Dock = DockStyle.Fill;

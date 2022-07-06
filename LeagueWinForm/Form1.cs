@@ -5,11 +5,26 @@ namespace LeagueWinForm
         private Button currentButton;
         private Form activeForm;
 
+        //Login flag
+        private static bool loggedIn = false;
+
         public Form1()
         {
             InitializeComponent();
             currentButton = new Button();
         }
+
+
+        // Getter and Setter logged in flag
+        public bool getLoggedIn()
+        {
+            return loggedIn;
+        }
+        public void setLoggedIn(bool val)
+        {
+            loggedIn = val;
+        }
+
 
         private void ActivateButton(object btnSender)
         {
@@ -59,22 +74,22 @@ namespace LeagueWinForm
 
         private void btn_1_Click(object sender, EventArgs e)
         {
-            ActivateButton(sender);
+            OpenChildForm(new Forms.live_game(), sender);
         }
 
         private void btn_3_Click(object sender, EventArgs e)
         {
-            ActivateButton(sender);
+            OpenChildForm(new Forms.live_game(), sender);
         }
 
         private void btn_2_Click(object sender, EventArgs e)
         {
-            ActivateButton(sender);
+            OpenChildForm(new Forms.live_game(), sender);
         }
 
         private void btn_4_Click(object sender, EventArgs e)
         {
-            ActivateButton(sender);
+            OpenChildForm(new Forms.live_game(), sender);
         }
 
 
