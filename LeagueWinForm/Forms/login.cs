@@ -56,39 +56,27 @@ namespace LeagueWinForm.Forms
                 MissingMemberHandling = MissingMemberHandling.Ignore
             };
             var currentUser = JsonConvert.DeserializeObject<User>(content, settings);
+            // Check instance and current user
 
             Form1.instance.setLoggedIn(true);
             Form1.instance.changeUIAfterLogin();
+            Form1.instance.setCurrentUser(currentUser);
+            
+          
 
-           /* childForm.TopLevel = false;
-            childForm.FormBorderStyle = FormBorderStyle.None;
-            childForm.Dock = DockStyle.Fill;
-            this.panel_desktop.Controls.Add(childForm);
-            this.panel_desktop.Tag = childForm;
-            childForm.BringToFront();
-            childForm.Show();
-            title_label.Text = childForm.Text;*/
+            /* childForm.TopLevel = false;
+             childForm.FormBorderStyle = FormBorderStyle.None;
+             childForm.Dock = DockStyle.Fill;
+             this.panel_desktop.Controls.Add(childForm);
+             this.panel_desktop.Tag = childForm;
+             childForm.BringToFront();
+             childForm.Show();
+             title_label.Text = childForm.Text;*/
 
 
             return;
 
         }
-
-
-
-        public class User
-        {
-            public string? id { get; set; }
-            public string? accountId { get; set; }
-            public string? puuid { get; set; }
-            public string? name { get; set; }
-            public string? profileIconId { get; set; }
-            public string? revisionDate { get; set; }
-            public string? summonerLevel { get; set; }
-
-        }
-
-
 
 
 

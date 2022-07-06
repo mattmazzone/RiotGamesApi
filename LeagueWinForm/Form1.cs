@@ -3,11 +3,14 @@ namespace LeagueWinForm
     public partial class Form1 : Form
     {
         private Button currentButton;
-        private Form activeForm;
-        public static Form1 instance;
+        private Form? activeForm;
+        public static Form1? instance;
 
-        //Login flag
+        // Login flag
         private static bool loggedIn = false;
+
+        // Current User
+        private static User? currentUser;
 
         public Form1()
         {
@@ -26,7 +29,21 @@ namespace LeagueWinForm
         {
             loggedIn = val;
         }
-
+        // Getter and Setter Current User
+        public void setCurrentUser(User user)
+        {
+            currentUser = user;
+            OpenChildForm(new Forms.my_acount(currentUser), currentButton);
+        }
+        public User getCurrentUser()
+        {
+            if (currentUser == null)
+            {
+                return new User("NotSignedIn");
+            }
+            return currentUser;
+        }
+        
 
         private void ActivateButton(object btnSender)
         {
@@ -65,7 +82,7 @@ namespace LeagueWinForm
             }
         }
 
-        private void OpenChildForm(Form childForm, object btnSender)
+        public void OpenChildForm(Form childForm, object btnSender)
         {
             if (activeForm != null)
             {
@@ -106,7 +123,24 @@ namespace LeagueWinForm
 
         private void loginBtn_Click(object sender, EventArgs e)
         {
-            OpenChildForm(new Forms.login(), sender);
+            if (loggedIn == true)
+            {
+                if (currentUser == null)
+                {
+                    OpenChildForm(new Forms.my_acount(new User("notSignedIn")), sender);
+                }
+                else
+                {
+                    OpenChildForm(new Forms.my_acount(currentUser), sender);
+                }
+                
+                
+            }
+            else
+            {
+                OpenChildForm(new Forms.login(), sender);
+            }
+            
         }
     }
 }
