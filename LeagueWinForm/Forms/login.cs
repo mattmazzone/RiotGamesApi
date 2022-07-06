@@ -18,12 +18,16 @@ namespace LeagueWinForm.Forms
         private string summonerName;
         private string region;
 
+        public static login loginInstance;
+
+
         public login()
         {
             InitializeComponent();
             apiKey = "";
             summonerName = "";
             region = "";
+            loginInstance = this;
         }
 
         private void LoginBtn_Click(object sender, EventArgs e)
@@ -53,9 +57,8 @@ namespace LeagueWinForm.Forms
             };
             var currentUser = JsonConvert.DeserializeObject<User>(content, settings);
 
-
-            var flag = new Form1();
-            flag.setLoggedIn(true);
+            Form1.instance.setLoggedIn(true);
+            Form1.instance.changeUIAfterLogin();
 
            /* childForm.TopLevel = false;
             childForm.FormBorderStyle = FormBorderStyle.None;

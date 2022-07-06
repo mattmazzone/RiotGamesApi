@@ -4,6 +4,7 @@ namespace LeagueWinForm
     {
         private Button currentButton;
         private Form activeForm;
+        public static Form1 instance;
 
         //Login flag
         private static bool loggedIn = false;
@@ -12,6 +13,7 @@ namespace LeagueWinForm
         {
             InitializeComponent();
             currentButton = new Button();
+            instance = this;
         }
 
 
@@ -50,7 +52,16 @@ namespace LeagueWinForm
                     previousBtn.BackColor = Color.FromArgb(48,49,54);
                     previousBtn.ForeColor = Color.Gainsboro;
                     //previousBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+                
                 }
+            }
+        }
+
+        public void changeUIAfterLogin()
+        {
+            if (loggedIn == true)
+            {
+                loginBtn.Text = "Logout";
             }
         }
 
