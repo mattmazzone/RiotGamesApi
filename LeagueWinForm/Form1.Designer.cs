@@ -29,15 +29,15 @@
         private void InitializeComponent()
         {
             this.panelMenu = new System.Windows.Forms.Panel();
+            this.loginBtn = new System.Windows.Forms.Button();
             this.btn_4 = new System.Windows.Forms.Button();
             this.btn_3 = new System.Windows.Forms.Button();
-            this.btn_2 = new System.Windows.Forms.Button();
+            this.ChampionMasteryBtn = new System.Windows.Forms.Button();
             this.btn_1 = new System.Windows.Forms.Button();
             this.panelLogo = new System.Windows.Forms.Panel();
             this.panelTitle = new System.Windows.Forms.Panel();
             this.title_label = new System.Windows.Forms.Label();
             this.panel_desktop = new System.Windows.Forms.Panel();
-            this.loginBtn = new System.Windows.Forms.Button();
             this.panelMenu.SuspendLayout();
             this.panelTitle.SuspendLayout();
             this.SuspendLayout();
@@ -48,7 +48,7 @@
             this.panelMenu.Controls.Add(this.loginBtn);
             this.panelMenu.Controls.Add(this.btn_4);
             this.panelMenu.Controls.Add(this.btn_3);
-            this.panelMenu.Controls.Add(this.btn_2);
+            this.panelMenu.Controls.Add(this.ChampionMasteryBtn);
             this.panelMenu.Controls.Add(this.btn_1);
             this.panelMenu.Controls.Add(this.panelLogo);
             this.panelMenu.Dock = System.Windows.Forms.DockStyle.Left;
@@ -56,6 +56,21 @@
             this.panelMenu.Name = "panelMenu";
             this.panelMenu.Size = new System.Drawing.Size(220, 534);
             this.panelMenu.TabIndex = 0;
+            // 
+            // loginBtn
+            // 
+            this.loginBtn.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.loginBtn.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.loginBtn.FlatAppearance.BorderSize = 0;
+            this.loginBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.loginBtn.ForeColor = System.Drawing.Color.Gainsboro;
+            this.loginBtn.Location = new System.Drawing.Point(0, 474);
+            this.loginBtn.Name = "loginBtn";
+            this.loginBtn.Size = new System.Drawing.Size(220, 60);
+            this.loginBtn.TabIndex = 5;
+            this.loginBtn.Text = "Login";
+            this.loginBtn.UseVisualStyleBackColor = true;
+            this.loginBtn.Click += new System.EventHandler(this.loginBtn_Click);
             // 
             // btn_4
             // 
@@ -87,20 +102,20 @@
             this.btn_3.UseVisualStyleBackColor = true;
             this.btn_3.Click += new System.EventHandler(this.btn_3_Click);
             // 
-            // btn_2
+            // ChampionMasteryBtn
             // 
-            this.btn_2.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btn_2.Dock = System.Windows.Forms.DockStyle.Top;
-            this.btn_2.FlatAppearance.BorderSize = 0;
-            this.btn_2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btn_2.ForeColor = System.Drawing.Color.Gainsboro;
-            this.btn_2.Location = new System.Drawing.Point(0, 140);
-            this.btn_2.Name = "btn_2";
-            this.btn_2.Size = new System.Drawing.Size(220, 60);
-            this.btn_2.TabIndex = 2;
-            this.btn_2.Text = "Champion Mastery";
-            this.btn_2.UseVisualStyleBackColor = true;
-            this.btn_2.Click += new System.EventHandler(this.btn_2_Click);
+            this.ChampionMasteryBtn.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.ChampionMasteryBtn.Dock = System.Windows.Forms.DockStyle.Top;
+            this.ChampionMasteryBtn.FlatAppearance.BorderSize = 0;
+            this.ChampionMasteryBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.ChampionMasteryBtn.ForeColor = System.Drawing.Color.Gainsboro;
+            this.ChampionMasteryBtn.Location = new System.Drawing.Point(0, 140);
+            this.ChampionMasteryBtn.Name = "ChampionMasteryBtn";
+            this.ChampionMasteryBtn.Size = new System.Drawing.Size(220, 60);
+            this.ChampionMasteryBtn.TabIndex = 2;
+            this.ChampionMasteryBtn.Text = "Champion Mastery";
+            this.ChampionMasteryBtn.UseVisualStyleBackColor = true;
+            this.ChampionMasteryBtn.Click += new System.EventHandler(this.ChampionMasteryBtn_Click);
             // 
             // btn_1
             // 
@@ -155,21 +170,6 @@
             this.panel_desktop.Size = new System.Drawing.Size(906, 454);
             this.panel_desktop.TabIndex = 2;
             // 
-            // loginBtn
-            // 
-            this.loginBtn.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.loginBtn.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.loginBtn.FlatAppearance.BorderSize = 0;
-            this.loginBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.loginBtn.ForeColor = System.Drawing.Color.Gainsboro;
-            this.loginBtn.Location = new System.Drawing.Point(0, 474);
-            this.loginBtn.Name = "loginBtn";
-            this.loginBtn.Size = new System.Drawing.Size(220, 60);
-            this.loginBtn.TabIndex = 5;
-            this.loginBtn.Text = "Login";
-            this.loginBtn.UseVisualStyleBackColor = true;
-            this.loginBtn.Click += new System.EventHandler(this.loginBtn_Click);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -192,7 +192,7 @@
         private Panel panelMenu;
         private Button btn_4;
         private Button btn_3;
-        private Button btn_2;
+        private Button ChampionMasteryBtn;
         private Button btn_1;
         private Panel panelLogo;
         private Panel panelTitle;
