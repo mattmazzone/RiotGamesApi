@@ -2,16 +2,24 @@ namespace LeagueWinForm
 {
     public partial class Form1 : Form
     {
+        // Selected UI Button
         private Button currentButton;
-        private Form activeForm;
+        // Active page
+        private Form? activeForm;
+        // Instance main app TODO: Make private and create getter setter?
+        public static Form1? instance;
 
-        //Login flag
+        // Login flag
         private static bool loggedIn = false;
+
+        // Current User
+        private static User? currentUser;
 
         public Form1()
         {
             InitializeComponent();
             currentButton = new Button();
+            instance = this;
         }
 
 
@@ -25,6 +33,29 @@ namespace LeagueWinForm
             loggedIn = val;
         }
 
+        // Getter and Setter Current User
+        public void setCurrentUser(User user)
+        {
+            if (loggedIn == true)
+            { 
+                currentUser = user;
+                OpenChildForm(new Forms.my_acount(currentUser), currentButton);
+            }
+            else
+            {
+                OpenChildForm(new Forms.Login(), currentButton);
+            }
+            
+        }
+        public User getCurrentUser()
+        {
+            if (currentUser == null)
+            {
+                return new User("NotSignedIn");
+            }
+            return currentUser;
+        }
+        
 
         private void ActivateButton(object btnSender)
         {
@@ -36,7 +67,7 @@ namespace LeagueWinForm
                     currentButton = (Button)btnSender;
                     currentButton.ForeColor = Color.White;
                     currentButton.BackColor = Color.FromArgb(66,71,77);
-                    //currentButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+                    
                 }
             }
         }
@@ -49,12 +80,24 @@ namespace LeagueWinForm
                 {
                     previousBtn.BackColor = Color.FromArgb(48,49,54);
                     previousBtn.ForeColor = Color.Gainsboro;
-                    //previousBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+                
                 }
             }
         }
 
-        private void OpenChildForm(Form childForm, object btnSender)
+        public void changeUIAfterLogin()
+        {
+            if (loggedIn == true)
+            {
+                loginBtn.Text = "My Account";
+            }
+            else
+            {
+                loginBtn.Text = "Login";
+            }
+        }
+
+        public void OpenChildForm(Form childForm, object btnSender)
         {
             if (activeForm != null)
             {
@@ -95,7 +138,25 @@ namespace LeagueWinForm
 
         private void loginBtn_Click(object sender, EventArgs e)
         {
-            OpenChildForm(new Forms.login(), sender);
+            if (loggedIn == true)
+            {
+                if (currentUser == null)
+                {
+                    OpenChildForm(new Forms.my_acount(new User("notSignedIn")), sender);
+                }
+                else
+                {
+                    OpenChildForm(new Forms.my_acount(currentUser), sender);
+                }
+                
+                
+            }
+            else
+            {
+                RiotApi.LoadChampionDictionnary();
+                OpenChildForm(new Forms.Login(), sender);
+            }
+            
         }
     }
 }

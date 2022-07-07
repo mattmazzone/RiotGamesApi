@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -12,82 +13,93 @@ using Newtonsoft.Json;
 
 namespace LeagueWinForm.Forms
 {
-    public partial class login : Form
+    public partial class Login : Form
     {
+        // Required inputs for API
         private string apiKey;
         private string summonerName;
         private string region;
 
-        public login()
+        // Instance of login page
+        public static Login? loginInstance;
+
+
+        public Login()
         {
             InitializeComponent();
+            
+            // Set to empty strings 
             apiKey = "";
             summonerName = "";
             region = "";
+            // Assign the instance
+            loginInstance = this;
         }
+
+
 
         private void LoginBtn_Click(object sender, EventArgs e)
         {
+            // Take inputs from fields
             apiKey = apiKeyInput.Text;
             summonerName = summonerNameInput.Text;
             region = regionSelect.Text.ToLower();
 
+            // HTTP Request
+            // TODO: Use HTTP Factory? 
             using var client = new HttpClient();
-            var endpoint = new Uri("https://" + region + ".api.riotgames.com/lol/summoner/v4/summoners/by-name/" + summonerName + "?api_key=" + apiKey);
-           
+            
+            // Get API call
+            var endpoint = RiotApi.GetSummonerByName(apiKey,summonerName,region);
+            
+            // Send API Call
             var request = client.GetAsync(endpoint).Result;
+            
+            // Check HTTP status code 
             var statusCode = request.StatusCode.ToString();
-
             if (statusCode != "OK")
             {
                 loginErrorLabel.Text = "Error Logging in : " + statusCode;
                 return;
             }
 
+            // Store Json 
             var content = request.Content.ReadAsStringAsync().Result;
 
+            // Json settings ignore Null values because we check right after
             var settings = new JsonSerializerSettings
             {
                 NullValueHandling = NullValueHandling.Ignore,
                 MissingMemberHandling = MissingMemberHandling.Ignore
             };
+            // Deserialize Json into a user object
             var currentUser = JsonConvert.DeserializeObject<User>(content, settings);
 
+            // Check if user object is null
+            if (currentUser is not null)
+            {
+                // Check if user properties are null
+                if (currentUser.CheckForNull())
+                {
+                    return;
+                }
+            }
+            else
+            {  
+                return;
+            }
 
-            var flag = new Form1();
-            flag.setLoggedIn(true);
 
-           /* childForm.TopLevel = false;
-            childForm.FormBorderStyle = FormBorderStyle.None;
-            childForm.Dock = DockStyle.Fill;
-            this.panel_desktop.Controls.Add(childForm);
-            this.panel_desktop.Tag = childForm;
-            childForm.BringToFront();
-            childForm.Show();
-            title_label.Text = childForm.Text;*/
-
-
+            // Check instance and assign current user
+            if (Form1.instance is not null)
+            {
+                Form1.instance.setLoggedIn(true);
+                Form1.instance.changeUIAfterLogin();
+                Form1.instance.setCurrentUser(currentUser);
+            }
+            
             return;
 
         }
-
-
-
-        public class User
-        {
-            public string? id { get; set; }
-            public string? accountId { get; set; }
-            public string? puuid { get; set; }
-            public string? name { get; set; }
-            public string? profileIconId { get; set; }
-            public string? revisionDate { get; set; }
-            public string? summonerLevel { get; set; }
-
-        }
-
-
-
-
-
     }
 }
