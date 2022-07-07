@@ -32,8 +32,16 @@ namespace LeagueWinForm
         // Getter and Setter Current User
         public void setCurrentUser(User user)
         {
-            currentUser = user;
-            OpenChildForm(new Forms.my_acount(currentUser), currentButton);
+            if (loggedIn == true)
+            {
+                currentUser = user;
+                OpenChildForm(new Forms.my_acount(currentUser), currentButton);
+            }
+            else
+            {
+                OpenChildForm(new Forms.login(), currentButton);
+            }
+            
         }
         public User getCurrentUser()
         {
@@ -78,7 +86,11 @@ namespace LeagueWinForm
         {
             if (loggedIn == true)
             {
-                loginBtn.Text = "Logout";
+                loginBtn.Text = "My Account";
+            }
+            else
+            {
+                loginBtn.Text = "Login";
             }
         }
 

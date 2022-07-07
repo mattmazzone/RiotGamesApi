@@ -24,5 +24,12 @@ namespace LeagueWinForm.Forms
             summonerNameValue.Text = user.name;
 
         }
+
+        private void logoutBtn_Click(object sender, EventArgs e)
+        {
+            Form1.instance.setLoggedIn(false);
+            Form1.instance.changeUIAfterLogin();
+            Form1.instance.setCurrentUser(new User("notSignedIn"));
+        }
     }
 }

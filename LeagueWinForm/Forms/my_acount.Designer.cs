@@ -42,7 +42,7 @@
             this.revisionDateValue = new System.Windows.Forms.Label();
             this.profileIconIdValue = new System.Windows.Forms.Label();
             this.accountIdValue = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
+            this.logoutBtn = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // accountIdLabel
@@ -178,21 +178,22 @@
             this.accountIdValue.Size = new System.Drawing.Size(0, 15);
             this.accountIdValue.TabIndex = 7;
             // 
-            // button1
+            // logoutBtn
             // 
-            this.button1.Location = new System.Drawing.Point(316, 331);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 14;
-            this.button1.Text = "button1";
-            this.button1.UseVisualStyleBackColor = true;
+            this.logoutBtn.Location = new System.Drawing.Point(316, 331);
+            this.logoutBtn.Name = "logoutBtn";
+            this.logoutBtn.Size = new System.Drawing.Size(75, 23);
+            this.logoutBtn.TabIndex = 14;
+            this.logoutBtn.Text = "Logout";
+            this.logoutBtn.UseVisualStyleBackColor = true;
+            this.logoutBtn.Click += new System.EventHandler(this.logoutBtn_Click);
             // 
             // my_acount
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.logoutBtn);
             this.Controls.Add(this.summonerLevelValue);
             this.Controls.Add(this.puuidValue);
             this.Controls.Add(this.idValue);
@@ -230,6 +231,6 @@
         private Label revisionDateValue;
         private Label profileIconIdValue;
         private Label accountIdValue;
-        private Button button1;
+        private Button logoutBtn;
     }
 }
