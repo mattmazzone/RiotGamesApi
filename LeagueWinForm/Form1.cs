@@ -99,10 +99,7 @@ namespace LeagueWinForm
 
         public void OpenChildForm(Form childForm, object btnSender)
         {
-            if (activeForm != null)
-            {
-                activeForm.Close();
-            }
+           
             ActivateButton(btnSender);
             activeForm = childForm;
             childForm.TopLevel = false;
@@ -125,9 +122,32 @@ namespace LeagueWinForm
             OpenChildForm(new Forms.live_game(), sender);
         }
 
-        private void btn_2_Click(object sender, EventArgs e)
+        private void ChampionMasteryBtn_Click(object sender, EventArgs e)
         {
-            OpenChildForm(new Forms.live_game(), sender);
+            if (loggedIn == true)
+            {
+                RiotApi.LoadChampionDictionnary();
+
+                if (currentUser is not null)
+                {
+                    if (Forms.champion_mastery.instance != null)
+                    {
+                        OpenChildForm(Forms.champion_mastery.instance, sender);
+                    }
+                    else
+                    {
+                        OpenChildForm(new Forms.champion_mastery(currentUser), sender);
+                    }
+                    
+                }
+                
+            }
+            else
+            {
+                OpenChildForm(new Forms.champion_mastery("NotLoggedIn"), sender);
+            }
+
+            
         }
 
         private void btn_4_Click(object sender, EventArgs e)
@@ -146,17 +166,29 @@ namespace LeagueWinForm
                 }
                 else
                 {
-                    OpenChildForm(new Forms.my_acount(currentUser), sender);
+                    if(Forms.my_acount.instance != null)
+                    {
+                        OpenChildForm(Forms.my_acount.instance, sender);
+                    }
+                    else
+                    {
+                        OpenChildForm(new Forms.my_acount(currentUser), sender);
+                        
+                    }
+                    
                 }
                 
                 
             }
             else
             {
-                RiotApi.LoadChampionDictionnary();
+                
                 OpenChildForm(new Forms.Login(), sender);
+                
             }
             
         }
+
+       
     }
 }

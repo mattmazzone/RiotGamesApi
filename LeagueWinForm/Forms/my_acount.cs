@@ -10,11 +10,16 @@ using System.Windows.Forms;
 
 namespace LeagueWinForm.Forms
 {
+    
     public partial class my_acount : Form
     {
+        public static my_acount? instance;
         public my_acount(User user)
         {
             InitializeComponent();
+
+            instance = this;
+
             accountIdValue.Text = user.AccountId;
             profileIconIdValue.Text = user.ProfileIconId;
             revisionDateValue.Text = user.RevisionDate;
