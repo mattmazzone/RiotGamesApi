@@ -15,21 +15,25 @@ namespace LeagueWinForm.Forms
         public my_acount(User user)
         {
             InitializeComponent();
-            accountIdValue.Text = user.accountId;
-            profileIconIdValue.Text = user.profileIconId;
-            revisionDateValue.Text = user.revisionDate;
-            summonerLevelValue.Text = user.summonerLevel;
-            idValue.Text = user.id;
-            puuidValue.Text = user.puuid;
-            summonerNameValue.Text = user.name;
+            accountIdValue.Text = user.AccountId;
+            profileIconIdValue.Text = user.ProfileIconId;
+            revisionDateValue.Text = user.RevisionDate;
+            summonerLevelValue.Text = user.SummonerLevel;
+            idValue.Text = user.Id;
+            puuidValue.Text = user.Puuid;
+            summonerNameValue.Text = user.Name;
 
         }
 
         private void logoutBtn_Click(object sender, EventArgs e)
         {
-            Form1.instance.setLoggedIn(false);
-            Form1.instance.changeUIAfterLogin();
-            Form1.instance.setCurrentUser(new User("notSignedIn"));
+            if (Form1.instance is not null)
+            {
+                Form1.instance.setLoggedIn(false);
+                Form1.instance.changeUIAfterLogin();
+                Form1.instance.setCurrentUser(new User("notSignedIn"));
+            }
+            
         }
     }
 }

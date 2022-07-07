@@ -2,8 +2,11 @@ namespace LeagueWinForm
 {
     public partial class Form1 : Form
     {
+        // Selected UI Button
         private Button currentButton;
+        // Active page
         private Form? activeForm;
+        // Instance main app TODO: Make private and create getter setter?
         public static Form1? instance;
 
         // Login flag
@@ -29,17 +32,18 @@ namespace LeagueWinForm
         {
             loggedIn = val;
         }
+
         // Getter and Setter Current User
         public void setCurrentUser(User user)
         {
             if (loggedIn == true)
-            {
+            { 
                 currentUser = user;
                 OpenChildForm(new Forms.my_acount(currentUser), currentButton);
             }
             else
             {
-                OpenChildForm(new Forms.login(), currentButton);
+                OpenChildForm(new Forms.Login(), currentButton);
             }
             
         }
@@ -63,7 +67,7 @@ namespace LeagueWinForm
                     currentButton = (Button)btnSender;
                     currentButton.ForeColor = Color.White;
                     currentButton.BackColor = Color.FromArgb(66,71,77);
-                    //currentButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+                    
                 }
             }
         }
@@ -76,7 +80,6 @@ namespace LeagueWinForm
                 {
                     previousBtn.BackColor = Color.FromArgb(48,49,54);
                     previousBtn.ForeColor = Color.Gainsboro;
-                    //previousBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
                 
                 }
             }
@@ -150,7 +153,8 @@ namespace LeagueWinForm
             }
             else
             {
-                OpenChildForm(new Forms.login(), sender);
+                RiotApi.LoadChampionDictionnary();
+                OpenChildForm(new Forms.Login(), sender);
             }
             
         }
