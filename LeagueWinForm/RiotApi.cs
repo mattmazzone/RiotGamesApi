@@ -10,30 +10,40 @@ namespace LeagueWinForm
         private static string? apiKey;
         private static string? region;
 
-
-
         public static void LoadChampionDictionnary()
         {
             using (StreamReader r = new("..\\..\\..\\LeagueData\\championFull.json"))
             {
+                // Read and parse json file
                 string json = r.ReadToEnd();
                 JObject jsonObj = JObject.Parse(json);
 
-                // TODO: Fix possible null reference
-                string results = jsonObj["keys"].ToString();
+                JToken? jsonToken = jsonObj["keys"];
+                if (jsonToken is null)
+                {
+                    Console.WriteLine("Json token is null in LoadChampionDictionnary()");
+                    return;
+                }
+                // Convert to string
+                string results = jsonToken.ToString();
+
+                // Deserialize into a dictionary
                 championList = JsonConvert.DeserializeObject<Dictionary<int, string>>(results);
             }
 
-
-            /*
-              //Print dictionnary
+        }
+        public static void PrintChampionListDictionary()
+        {
+            if (championList is null)
+            {
+                return;
+            }
+            //Print dictionnary
             foreach (KeyValuePair<int, string> champion in championList)
             {
                 Console.WriteLine("Key: {0}, Value: {1}",
                 champion.Key, champion.Value);
             }
-            */
-            
         }
 
 

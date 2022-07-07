@@ -79,12 +79,14 @@ namespace LeagueWinForm.Forms
                 }
 
                 int key = Int32.Parse(championMastery.ChampionID);
-                string value = "";
-                
-                if (RiotApi.championList.TryGetValue(Int32.Parse(championMastery.ChampionID), out value))
+
+
+                if (RiotApi.championList.TryGetValue(Int32.Parse(championMastery.ChampionID), out string? value))
                 {
                     championMastery.ChampionName = value;
                 }
+
+
             }
 
             champion1Value.Text = listChampionMasteries[0].ChampionName;

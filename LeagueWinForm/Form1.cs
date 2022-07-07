@@ -37,7 +37,7 @@ namespace LeagueWinForm
         public void setCurrentUser(User user)
         {
             if (loggedIn == true)
-            { 
+            {
                 currentUser = user;
                 OpenChildForm(new Forms.my_acount(currentUser), currentButton);
             }
@@ -45,7 +45,7 @@ namespace LeagueWinForm
             {
                 OpenChildForm(new Forms.Login(), currentButton);
             }
-            
+
         }
         public User getCurrentUser()
         {
@@ -55,32 +55,32 @@ namespace LeagueWinForm
             }
             return currentUser;
         }
-        
+
 
         private void ActivateButton(object btnSender)
         {
             if (btnSender != null)
             {
-                if(currentButton != (Button)btnSender)
+                if (currentButton != (Button)btnSender)
                 {
                     DisableButton();
                     currentButton = (Button)btnSender;
                     currentButton.ForeColor = Color.White;
-                    currentButton.BackColor = Color.FromArgb(66,71,77);
-                    
+                    currentButton.BackColor = Color.FromArgb(66, 71, 77);
+
                 }
             }
         }
-        
+
         private void DisableButton()
         {
-            foreach(Control previousBtn in panelMenu.Controls)
+            foreach (Control previousBtn in panelMenu.Controls)
             {
-                if(previousBtn.GetType() == typeof(Button))
+                if (previousBtn.GetType() == typeof(Button))
                 {
-                    previousBtn.BackColor = Color.FromArgb(48,49,54);
+                    previousBtn.BackColor = Color.FromArgb(48, 49, 54);
                     previousBtn.ForeColor = Color.Gainsboro;
-                
+
                 }
             }
         }
@@ -99,7 +99,7 @@ namespace LeagueWinForm
 
         public void OpenChildForm(Form childForm, object btnSender)
         {
-           
+            // activeForm.Close(); if != chidlform???
             ActivateButton(btnSender);
             activeForm = childForm;
             childForm.TopLevel = false;
@@ -122,33 +122,36 @@ namespace LeagueWinForm
             OpenChildForm(new Forms.live_game(), sender);
         }
 
+        // View Champion Masteries
         private void ChampionMasteryBtn_Click(object sender, EventArgs e)
         {
             if (loggedIn == true)
             {
+                // Load dictionary
                 RiotApi.LoadChampionDictionnary();
 
-                if (currentUser is not null)
+                // Check for instance of champion mastery page
+                if (Forms.champion_mastery.instance != null)
                 {
-                    if (Forms.champion_mastery.instance != null)
-                    {
-                        OpenChildForm(Forms.champion_mastery.instance, sender);
-                    }
-                    else
+                    // Reopen instance
+                    OpenChildForm(Forms.champion_mastery.instance, sender);
+                }
+                else
+                {
+                    // Create first instance
+                    if (currentUser is not null)
                     {
                         OpenChildForm(new Forms.champion_mastery(currentUser), sender);
-                    }
-                    
+                    } 
                 }
-                
             }
             else
             {
-                OpenChildForm(new Forms.champion_mastery("NotLoggedIn"), sender);
+                // Must login first
+                OpenChildForm(new Forms.Login("Login to view champion mastery!"), sender);
             }
-
-            
         }
+            
 
         private void btn_4_Click(object sender, EventArgs e)
         {
@@ -158,37 +161,32 @@ namespace LeagueWinForm
 
         private void loginBtn_Click(object sender, EventArgs e)
         {
+            // check if already logged in
             if (loggedIn == true)
             {
-                if (currentUser == null)
+                if (currentUser is null)
                 {
                     OpenChildForm(new Forms.my_acount(new User("notSignedIn")), sender);
                 }
                 else
                 {
-                    if(Forms.my_acount.instance != null)
+                    // Check if instance of my_account exists otherwise instantiate one
+                    if (Forms.my_acount.instance is not null)
                     {
                         OpenChildForm(Forms.my_acount.instance, sender);
                     }
                     else
                     {
                         OpenChildForm(new Forms.my_acount(currentUser), sender);
-                        
                     }
-                    
                 }
-                
-                
             }
             else
             {
-                
+                // Instantiate a login page
                 OpenChildForm(new Forms.Login(), sender);
-                
             }
-            
-        }
 
-       
+        }
     }
 }

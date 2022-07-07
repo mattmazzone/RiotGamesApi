@@ -35,6 +35,18 @@ namespace LeagueWinForm.Forms
             // Assign the instance
             loginInstance = this;
         }
+        public Login(string context)
+        {
+            InitializeComponent();
+
+            RedirectMessageLabel.Text = context;
+            // Set to empty strings 
+            apiKey = "";
+            summonerName = "";
+            region = "";
+            // Assign the instance
+            loginInstance = this;
+        }
 
 
 

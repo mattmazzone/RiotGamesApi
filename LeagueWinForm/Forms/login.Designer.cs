@@ -36,6 +36,7 @@
             this.regionSelect = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
             this.loginErrorLabel = new System.Windows.Forms.Label();
+            this.RedirectMessageLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // label1
@@ -117,11 +118,20 @@
             this.loginErrorLabel.Size = new System.Drawing.Size(0, 15);
             this.loginErrorLabel.TabIndex = 8;
             // 
-            // login
+            // RedirectMessageLabel
+            // 
+            this.RedirectMessageLabel.AutoSize = true;
+            this.RedirectMessageLabel.Location = new System.Drawing.Point(318, 100);
+            this.RedirectMessageLabel.Name = "RedirectMessageLabel";
+            this.RedirectMessageLabel.Size = new System.Drawing.Size(0, 15);
+            this.RedirectMessageLabel.TabIndex = 9;
+            // 
+            // Login
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.RedirectMessageLabel);
             this.Controls.Add(this.loginErrorLabel);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.regionSelect);
@@ -130,7 +140,7 @@
             this.Controls.Add(this.LoginBtn);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-            this.Name = "login";
+            this.Name = "Login";
             this.Text = "LOGIN";
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -147,5 +157,6 @@
         private ComboBox regionSelect;
         private Label label3;
         private Label loginErrorLabel;
+        private Label RedirectMessageLabel;
     }
 }
