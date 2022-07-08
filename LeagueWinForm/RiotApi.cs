@@ -1,5 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Net;
+using System.Text;
 
 namespace LeagueWinForm
 {
@@ -59,6 +61,42 @@ namespace LeagueWinForm
         {
             var apiRequest = new Uri("https://" + RiotApi.region + ".api.riotgames.com/lol/champion-mastery/v4/champion-masteries/by-summoner/" + id + "?api_key=" + RiotApi.apiKey);
             return apiRequest;
+        }
+
+
+        // Live Game 
+        public static void GetAllGameData()
+        {
+
+
+            var username = "riot";
+            var password = "mKJ_86OnEwotIOwKcP4KSA";
+            string encoded = System.Convert.ToBase64String(Encoding.GetEncoding("ISO-8859-1")
+                                           .GetBytes(username + ":" + password));
+            
+            
+
+
+
+
+            var apiRequest = "https://127.0.0.1:56725/lol-champ-select/v1/session/";
+            var httpClientHandler = new HttpClientHandler();
+
+            httpClientHandler.ServerCertificateCustomValidationCallback = (message, cert, chain, sslPolicyErrors) =>
+            {
+                return true;
+            };
+
+            HttpClient httpClient = new HttpClient(httpClientHandler) {
+                BaseAddress = new Uri(apiRequest)
+            };
+            httpClient.DefaultRequestHeaders.Add("Authorization", "Basic " + encoded);
+
+            var request = httpClient.GetAsync(apiRequest).Result;
+          
+            // Store Json 
+            var content = request.Content.ReadAsStringAsync().Result.ToString();
+            Console.WriteLine(content);
         }
     }
 }

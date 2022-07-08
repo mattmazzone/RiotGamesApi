@@ -1,3 +1,5 @@
+using System.Net;
+
 namespace LeagueWinForm
 {
     public partial class Form1 : Form
@@ -183,6 +185,7 @@ namespace LeagueWinForm
             }
             else
             {
+                RiotApi.GetAllGameData();
                 // Instantiate a login page
                 OpenChildForm(new Forms.Login(), sender);
             }
