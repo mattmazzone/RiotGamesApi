@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 using System.Net;
 using System.Text;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 namespace LeagueWinForm
 {
@@ -81,9 +82,24 @@ namespace LeagueWinForm
                 StreamReader reader = process.StandardOutput;
                 string output = reader.ReadToEnd();
 
-                Console.WriteLine(output);
+
+                
 
                 process.WaitForExit();
+
+                Regex rx_port = new Regex(@"--app-port=([0-9]*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                Regex rx_pwd = new Regex(@"--remoting-auth-token=([\w-]*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+                var port_match = rx_port.Match(output).ToString();
+                var pwd_match = rx_pwd.Match(output).ToString();
+
+
+
+
+
+
+                Console.WriteLine("port: " + port_match);
+                Console.WriteLine("pwd: " + pwd_match);
             }
             
             
