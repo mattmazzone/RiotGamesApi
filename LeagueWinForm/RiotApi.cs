@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using System.Net;
 using System.Text;
+using System.Diagnostics;
 
 namespace LeagueWinForm
 {
@@ -63,7 +64,30 @@ namespace LeagueWinForm
             return apiRequest;
         }
 
+        // WMIC Commands
+        public static void GetPortAndPwd()
+        {
+            string command = "/C wmic PROCESS WHERE name='LeagueClientUx.exe' GET commandline";
 
+
+            using (Process process = new Process())
+            {
+                process.StartInfo.FileName = "cmd.exe";
+                process.StartInfo.Arguments = command;
+                process.StartInfo.UseShellExecute = false;
+                process.StartInfo.RedirectStandardOutput = true;
+                process.Start();
+
+                StreamReader reader = process.StandardOutput;
+                string output = reader.ReadToEnd();
+
+                Console.WriteLine(output);
+
+                process.WaitForExit();
+            }
+            
+            
+        }
         // Live Game 
         public static void GetAllGameData()
         {
@@ -74,10 +98,6 @@ namespace LeagueWinForm
             string encoded = System.Convert.ToBase64String(Encoding.GetEncoding("ISO-8859-1")
                                            .GetBytes(username + ":" + password));
             
-            
-
-
-
 
             var apiRequest = "https://127.0.0.1:56725/lol-champ-select/v1/session/";
             var httpClientHandler = new HttpClientHandler();

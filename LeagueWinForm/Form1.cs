@@ -185,7 +185,8 @@ namespace LeagueWinForm
             }
             else
             {
-                RiotApi.GetAllGameData();
+                RiotApi.GetPortAndPwd();
+                //RiotApi.GetAllGameData();
                 // Instantiate a login page
                 OpenChildForm(new Forms.Login(), sender);
             }
