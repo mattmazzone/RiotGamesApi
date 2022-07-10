@@ -25,7 +25,6 @@ namespace LeagueWinForm.Forms
 
         private void OnPageLoad()
         {
-            Console.WriteLine("Did shit again");
             using var client = new HttpClient();
 
             // Check for null user

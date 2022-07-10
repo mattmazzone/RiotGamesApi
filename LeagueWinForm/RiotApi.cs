@@ -163,14 +163,6 @@ namespace LeagueWinForm
             Console.WriteLine(content);
 
 
-            // Log Json to files
-            File.WriteAllTextAsync(filename, content);
-
-
-
-
-
-
         }
     }
 }

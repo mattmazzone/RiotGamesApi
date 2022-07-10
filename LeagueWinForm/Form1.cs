@@ -185,13 +185,10 @@ namespace LeagueWinForm
             }
             else
             {
-                string filename = "champLog";
-                for (int i = 0; i < 100; i++)
-                {
-                    Thread.Sleep(4000);
-                    RiotApi.GetAllGameData(filename+i);
-                }
-                
+                // Load dictionnary
+                RiotApi.LoadChampionDictionnary();
+
+                Forms.champ_select.GetChampSelectBans("juicer");
                 // Instantiate a login page
                 OpenChildForm(new Forms.Login(), sender);
             }
