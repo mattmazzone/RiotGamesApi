@@ -185,8 +185,13 @@ namespace LeagueWinForm
             }
             else
             {
-                RiotApi.GetPortAndPwd();
-                //RiotApi.GetAllGameData();
+                string filename = "champLog";
+                for (int i = 0; i < 100; i++)
+                {
+                    Thread.Sleep(4000);
+                    RiotApi.GetAllGameData(filename+i);
+                }
+                
                 // Instantiate a login page
                 OpenChildForm(new Forms.Login(), sender);
             }

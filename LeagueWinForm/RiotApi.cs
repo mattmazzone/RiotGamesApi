@@ -14,6 +14,10 @@ namespace LeagueWinForm
         private static string? apiKey;
         private static string? region;
 
+        private static string? client_port;
+        private static string? client_pwd;
+        private static string? client_username = "riot";
+
         public static void LoadChampionDictionnary()
         {
             using (StreamReader r = new("..\\..\\..\\LeagueData\\championFull.json"))
@@ -89,7 +93,17 @@ namespace LeagueWinForm
                 // Read Output and store in string
                 StreamReader reader = process.StandardOutput;
                 output = reader.ReadToEnd();
-                Console.WriteLine(output.Length);
+                
+
+                // Error if League client is not open
+                // TODO: Find better way / Warn user on UI 
+                if (output.Length < 10)
+                {
+                    Console.WriteLine("League Client not detected");
+                    return;
+                }
+
+
                 // Wait for exit
                 process.WaitForExit();
             }
@@ -105,41 +119,58 @@ namespace LeagueWinForm
             port_match = port_match.Replace("--app-port=", "");
             pwd_match = pwd_match.Replace("--remoting-auth-token=", "");
 
-
-            Console.WriteLine("port: " + port_match);
-            Console.WriteLine("pwd: " + pwd_match);
-
-
-        }
-        // Live Game 
-        public static void GetAllGameData()
-        {
-
-
-            var username = "riot";
-            var password = "mKJ_86OnEwotIOwKcP4KSA";
-            string encoded = System.Convert.ToBase64String(Encoding.GetEncoding("ISO-8859-1")
-                                           .GetBytes(username + ":" + password));
+            // Assign values
+            client_port = port_match;
+            client_pwd = pwd_match;
             
+            return;
+        }
 
-            var apiRequest = "https://127.0.0.1:56725/lol-champ-select/v1/session/";
+        // Live Game 
+        public static void GetAllGameData(string filename)
+        {
+            // Call private function to get port and password
+            GetPortAndPwd();
+            
+            // Encode HTTP header in Base64
+            string encoded = System.Convert.ToBase64String(Encoding.GetEncoding("ISO-8859-1")
+                                           .GetBytes(client_username + ":" + client_pwd));
+            
+            // Api url for request
+            var apiRequest = "https://127.0.0.1:" + client_port + "/lol-champ-select/v1/session";
+
+
+            // Create a HttpClientHandler
             var httpClientHandler = new HttpClientHandler();
-
             httpClientHandler.ServerCertificateCustomValidationCallback = (message, cert, chain, sslPolicyErrors) =>
             {
                 return true;
             };
 
+            // Create client with handler and address
             HttpClient httpClient = new HttpClient(httpClientHandler) {
                 BaseAddress = new Uri(apiRequest)
             };
+
+            // Add encoded request header
             httpClient.DefaultRequestHeaders.Add("Authorization", "Basic " + encoded);
 
+            // Make the request
             var request = httpClient.GetAsync(apiRequest).Result;
           
-            // Store Json 
+            // Store Json as string 
             var content = request.Content.ReadAsStringAsync().Result.ToString();
             Console.WriteLine(content);
+
+
+            // Log Json to files
+            File.WriteAllTextAsync(filename, content);
+
+
+
+
+
+
         }
     }
 }
