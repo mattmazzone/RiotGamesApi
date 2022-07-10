@@ -15,7 +15,6 @@ namespace LeagueWinForm.Forms
             InitializeComponent();
             OnPageLoad();
 
-
         }
 
         public champion_mastery(string context)
@@ -79,8 +78,7 @@ namespace LeagueWinForm.Forms
 
                 int key = Int32.Parse(championMastery.ChampionID);
 
-
-                if (RiotApi.championList.TryGetValue(Int32.Parse(championMastery.ChampionID), out string? value))
+                if (RiotApi.championList.TryGetValue(key, out string? value))
                 {
                     championMastery.ChampionName = value;
                 }
