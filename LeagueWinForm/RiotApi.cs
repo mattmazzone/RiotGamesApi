@@ -68,41 +68,48 @@ namespace LeagueWinForm
         // WMIC Commands
         public static void GetPortAndPwd()
         {
+            // Command to run in Cmd Prompt
             string command = "/C wmic PROCESS WHERE name='LeagueClientUx.exe' GET commandline";
 
+            // Output string
+            string output = "";
 
+            // Declare a Process
             using (Process process = new Process())
             {
+                // Process settings
                 process.StartInfo.FileName = "cmd.exe";
                 process.StartInfo.Arguments = command;
                 process.StartInfo.UseShellExecute = false;
                 process.StartInfo.RedirectStandardOutput = true;
+                
+                // Start Process
                 process.Start();
 
+                // Read Output and store in string
                 StreamReader reader = process.StandardOutput;
-                string output = reader.ReadToEnd();
-
-
-                
-
+                output = reader.ReadToEnd();
+                Console.WriteLine(output.Length);
+                // Wait for exit
                 process.WaitForExit();
-
-                Regex rx_port = new Regex(@"--app-port=([0-9]*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-                Regex rx_pwd = new Regex(@"--remoting-auth-token=([\w-]*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-
-                var port_match = rx_port.Match(output).ToString();
-                var pwd_match = rx_pwd.Match(output).ToString();
-
-
-
-
-
-
-                Console.WriteLine("port: " + port_match);
-                Console.WriteLine("pwd: " + pwd_match);
             }
-            
-            
+            // Regex rules
+            Regex rx_port = new Regex(@"--app-port=([0-9]*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            Regex rx_pwd = new Regex(@"--remoting-auth-token=([\w-]*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+            // Match strings with regex rules
+            string port_match = rx_port.Match(output).ToString();
+            string pwd_match = rx_pwd.Match(output).ToString();
+
+            // Extract values
+            port_match = port_match.Replace("--app-port=", "");
+            pwd_match = pwd_match.Replace("--remoting-auth-token=", "");
+
+
+            Console.WriteLine("port: " + port_match);
+            Console.WriteLine("pwd: " + pwd_match);
+
+
         }
         // Live Game 
         public static void GetAllGameData()
