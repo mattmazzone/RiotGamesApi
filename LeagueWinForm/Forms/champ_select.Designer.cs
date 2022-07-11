@@ -94,9 +94,8 @@
             this.BanListValues.AutoSize = true;
             this.BanListValues.Location = new System.Drawing.Point(123, 62);
             this.BanListValues.Name = "BanListValues";
-            this.BanListValues.Size = new System.Drawing.Size(32, 15);
+            this.BanListValues.Size = new System.Drawing.Size(0, 15);
             this.BanListValues.TabIndex = 3;
-            this.BanListValues.Text = "bans";
             // 
             // EnnemyTeam1Champ
             // 

@@ -12,6 +12,7 @@ namespace LeagueWinForm.Forms
         private static string champ_select_phase = "";
 
         private static bool inGame = false;
+        private static bool changeBanLabel = false;
 
         public static bool checkPhase = true;
 
@@ -29,71 +30,83 @@ namespace LeagueWinForm.Forms
         // Set the banned champions in the hash set
         public static void GetChampSelectBans()
         {
+            // Check if ban label has already been updated
+            if (changeBanLabel is true)
+            {
+                return;
+            }
+
+            // Check if all bans are done
             if (numBans == 10)
             {
                 string labelText = "";
 
+                // Prepare string for UI label
                 foreach (string name in bannedChampions)
                 {
-                    labelText = labelText + name +", " ;
-                }
-
-
-
-                if (instance is not null)
-                {
-                    instance.BanListValues.Text = labelText;
-                }
-                
-                return;
-            }
-            numBans = 0;
-            // Use Local File while developping 
-            using (StreamReader r = new("..\\..\\..\\LeagueData\\champLog26.json"))
-            {
-                // Read and parse json file
-                string json = r.ReadToEnd();
-                JObject jsonObj = JObject.Parse(json);
-
-                JToken? jsonToken = jsonObj["actions"]?[0];
-                if (jsonToken is null)
-                {
-                    Console.WriteLine("Json token is null in GetChampSelectBans()");
-                    return;
-                }
-                string result = jsonToken.ToString();
-                List<ChampionBan>? tempList = new List<ChampionBan>();
-                tempList = JsonConvert.DeserializeObject<List<ChampionBan>>(result);
-
-                if (tempList is null)
-                {
-                    return;
-                }
-
-
-
-                foreach (ChampionBan ban in tempList)
-                {
-                    if (ban.ChampionId is not null && ban.Completed is not null && RiotApi.championList is not null)
+                    // Condition for last element comma
+                    if (name == bannedChampions.ElementAt(bannedChampions.Count - 1))
                     {
-                        if (ban.Completed == "true")
-                        {
-                            numBans++;
-                            int key = Int32.Parse(ban.ChampionId);
-
-                            if (RiotApi.championList.TryGetValue(key, out string? value))
-                            {
-                                ban.ChampionId = value;
-                            }
-                            bannedChampions.Add(ban.ChampionId);
-                        }
+                        labelText = labelText + name;
+                    }
+                    else
+                    {
+                        labelText = labelText + name + ", ";
                     }
 
                 }
+                // Change Banned champ label in UI
+                if (instance is not null)
+                {
+                    instance.BanListValues.Text = labelText;
+                    changeBanLabel = true;
+                }
+                return;
+            }
 
-                
+            // Reset banned champ counter
+            numBans = 0;
 
+            // Use Local File while developping 
+            var json = RiotApi.GetChampSelectSession();
 
+            // Parse json file
+            JObject jsonObj = JObject.Parse(json);
+
+            // ["actions"][0] returns the list of 10 actions (bans)
+            JToken? jsonToken = jsonObj["actions"]?[0];
+            if (jsonToken is null)
+            {
+                Console.WriteLine("Json token is null in GetChampSelectBans()");
+                return;
+            }
+            string result = jsonToken.ToString();
+            List<ChampionBan>? tempList = new List<ChampionBan>();
+            tempList = JsonConvert.DeserializeObject<List<ChampionBan>>(result);
+
+            // Check if successful Deserialize
+            if (tempList is null)
+            {
+                return;
+            }
+
+            // Find Id in dictionary and add champion name in HashSet 
+            foreach (ChampionBan ban in tempList)
+            {
+                if (ban.ChampionId is not null && ban.Completed is not null && RiotApi.championList is not null)
+                {
+                    if (ban.Completed == "true")
+                    {
+                        numBans++;
+                        int key = Int32.Parse(ban.ChampionId);
+
+                        if (RiotApi.championList.TryGetValue(key, out string? value))
+                        {
+                            ban.ChampionId = value;
+                        }
+                        bannedChampions.Add(ban.ChampionId);
+                    }
+                }
             }
         }
 
@@ -103,11 +116,11 @@ namespace LeagueWinForm.Forms
             string currentPhase = "";
             string oldPhase = "";
 
-              
+
             while (checkPhase)
             {
                 currentPhase = RiotApi.GetChampSelectPhase();
-                
+
                 switch (currentPhase)
                 {
                     case "PLANNING":
@@ -127,7 +140,7 @@ namespace LeagueWinForm.Forms
                     case "GAME_STARTING":
                         champ_select_phase = "GAME_STARTING";
                         inGame = true;
-                            break;
+                        break;
 
                     case "NOT_IN_CS":
                         champ_select_phase = "NOT_IN_CS";
@@ -148,10 +161,10 @@ namespace LeagueWinForm.Forms
 
 
                 if (inGame == true)
-                {                    
+                {
                     Console.WriteLine("YIELD");
                     inGame = false;
-                    
+
                     return;
                 }
             }

@@ -134,6 +134,7 @@ namespace LeagueWinForm
             Forms.champ_select.checkPhase = true;
             Forms.champ_select.GetChampSelectPhase();
 
+            // check if instance exists
             if (Forms.champ_select.instance is not null)
             {
                 OpenChildForm(Forms.champ_select.instance, sender);
@@ -141,10 +142,7 @@ namespace LeagueWinForm
             else
             {
                 OpenChildForm(new Forms.champ_select(), sender);
-            }
-
-
-            
+            }          
         }
 
         // View Champion Masteries
