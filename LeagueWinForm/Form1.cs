@@ -20,10 +20,13 @@ namespace LeagueWinForm
         public Form1()
         {
             InitializeComponent();
+
+            // Load dictionnary
+            RiotApi.LoadChampionDictionnary();
+
             currentButton = new Button();
             instance = this;
         }
-
 
         // Getter and Setter logged in flag
         public bool getLoggedIn()
@@ -102,6 +105,12 @@ namespace LeagueWinForm
         public void OpenChildForm(Form childForm, object btnSender)
         {
             // activeForm.Close(); if != chidlform???
+            
+            // Stop asynch function when switching out of champ select window 
+            if (childForm.GetType() != typeof(Forms.champ_select))
+            {
+                Forms.champ_select.checkPhase = false;
+            }
             ActivateButton(btnSender);
             activeForm = childForm;
             childForm.TopLevel = false;
@@ -121,7 +130,21 @@ namespace LeagueWinForm
 
         private void btn_3_Click(object sender, EventArgs e)
         {
-            OpenChildForm(new Forms.live_game(), sender);
+            // Start champ select checker
+            Forms.champ_select.checkPhase = true;
+            Forms.champ_select.GetChampSelectPhase();
+
+            if (Forms.champ_select.instance is not null)
+            {
+                OpenChildForm(Forms.champ_select.instance, sender);
+            }
+            else
+            {
+                OpenChildForm(new Forms.champ_select(), sender);
+            }
+
+
+            
         }
 
         // View Champion Masteries
@@ -185,10 +208,6 @@ namespace LeagueWinForm
             }
             else
             {
-                // Load dictionnary
-                RiotApi.LoadChampionDictionnary();
-
-                Forms.champ_select.GetChampSelectBans("juicer");
                 // Instantiate a login page
                 OpenChildForm(new Forms.Login(), sender);
             }
