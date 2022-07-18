@@ -137,8 +137,8 @@ namespace LeagueWinForm.Forms
             }
             string result = jsonToken.ToString();
 
-            List<ChampionBan>? tempList = new List<ChampionBan>();
-            tempList = JsonConvert.DeserializeObject<List<ChampionBan>>(result);
+            List<TeamPlayer>? tempList = new List<TeamPlayer>();
+            tempList = JsonConvert.DeserializeObject<List<TeamPlayer>>(result);
 
             // Check if successful Deserialize
             if (tempList is null)
@@ -147,23 +147,40 @@ namespace LeagueWinForm.Forms
             }
 
             // Find Id in dictionary and add champion name in HashSet 
-            foreach (ChampionBan ban in tempList)
+            foreach (TeamPlayer ban in tempList)
             {
-                if (ban.ChampionId is not null && ban.Completed is not null && RiotApi.championList is not null)
+                if (ban.ChampionId is not null && RiotApi.championList is not null)
                 {
-                    if (ban.Completed == "true")
-                    {
-                        numBans++;
-                        int key = Int32.Parse(ban.ChampionId);
+                    int key = Int32.Parse(ban.ChampionId);
 
-                        if (RiotApi.championList.TryGetValue(key, out string? value))
-                        {
-                            ban.ChampionId = value;
-                        }
-                        bannedChampions.Add(ban.ChampionId);
+                    if (RiotApi.championList.TryGetValue(key, out string? value))
+                    {
+                        ban.ChampionId = value;
                     }
+                    bannedChampions.Add(ban.ChampionId);
+                }
+
+            }
+
+            // Set Labels in UI
+            for (int i = 0; i < tempList.Count; i++)
+            {
+                string labelName = "MyTeam" + i + "Champ";
+                if (instance is not null)
+                {
+                    var control = instance.Controls.Find(labelName, true).FirstOrDefault();
+                    if (control is not null)
+                    {
+                        control.Text = tempList[i].ChampionId;
+                    }
+                    
                 }
             }
+
+
+
+
+
 
 
         }
@@ -241,11 +258,19 @@ namespace LeagueWinForm.Forms
 
         }
 
-        private class csTeam
+        private class TeamPlayer
         {
             public string? AssignedPosition { get; set; }
             public string? CellIs { get; set; }
-
+            public string? ChampionId { set; get; }
+            public string? ChampionPickIntent { get; set; }
+            public string? EntitledFeatureType { get; set; }
+            public string? SelectedSkinId { get; set; }
+            public string? Spell1Id { set; get; }
+            public string? Spell2Id { set; get; }
+            public string? SummonerId { set; get; }
+            public string? Team { get; set; }
+            public string? WardSkinId { set; get; }
 
         }
 
