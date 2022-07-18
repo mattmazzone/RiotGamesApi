@@ -177,12 +177,7 @@ namespace LeagueWinForm.Forms
                 }
             }
 
-
-
-
-
-
-
+            changePlayerLabels = true;
         }
 
 
@@ -200,6 +195,7 @@ namespace LeagueWinForm.Forms
                 {
                     case "PLANNING":
                         champ_select_phase = "PLANNING";
+                        GetChampSelectPlayer();
                         break;
 
                     case "BAN_PICK":
