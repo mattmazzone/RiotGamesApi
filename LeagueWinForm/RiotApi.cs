@@ -220,5 +220,42 @@ namespace LeagueWinForm
 
             return phase;
         }
+
+        public static string GetSummonerById(string id)
+        {
+            // Call private function to get port and password
+            GetPortAndPwd();
+
+            // Encode HTTP header in Base64
+            string encoded = System.Convert.ToBase64String(Encoding.GetEncoding("ISO-8859-1")
+                                           .GetBytes(client_username + ":" + client_pwd));
+
+            // Api url for request
+            var apiRequest = "https://127.0.0.1:" + client_port + "/lol-summoner/v1/summoners/" +id;
+
+            // Create a HttpClientHandler
+            var httpClientHandler = new HttpClientHandler();
+            httpClientHandler.ServerCertificateCustomValidationCallback = (message, cert, chain, sslPolicyErrors) =>
+            {
+                return true;
+            };
+
+            // Create client with handler and address
+            HttpClient httpClient = new HttpClient(httpClientHandler)
+            {
+                BaseAddress = new Uri(apiRequest)
+            };
+
+            // Add encoded request header
+            httpClient.DefaultRequestHeaders.Add("Authorization", "Basic " + encoded);
+
+            // Make the request
+            var request = httpClient.GetAsync(apiRequest).Result;
+
+            // Store Json as string 
+            var content = request.Content.ReadAsStringAsync().Result.ToString();
+
+            return content;
+        }
     }
 }

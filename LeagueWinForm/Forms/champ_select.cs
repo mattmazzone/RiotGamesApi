@@ -123,7 +123,10 @@ namespace LeagueWinForm.Forms
 
 
             // Do a Riot API Call
-            var json = RiotApi.GetChampSelectSession();
+            //var json = RiotApi.GetChampSelectSession();
+
+            var json = System.IO.File.ReadAllText(@"C:\Users\matte\source\repos\RiotGamesApi\LeagueWinForm\LeagueData\champLog43.json");
+
 
             // Parse json file
             JObject jsonObj = JObject.Parse(json);
@@ -162,18 +165,44 @@ namespace LeagueWinForm.Forms
 
             }
 
-            // Set Labels in UI
-            for (int i = 0; i < tempList.Count; i++)
+            // Store players in match in a list 
+            List<LCUPlayerInfo> myTeamUsers = new List<LCUPlayerInfo>();
+            foreach (TeamPlayer player in tempList)
             {
-                string labelName = "MyTeam" + i + "Champ";
+                if (player.SummonerId is not null)
+                {
+                    var user = JsonConvert.DeserializeObject<LCUPlayerInfo>(RiotApi.GetSummonerById(player.SummonerId));
+                    if (user is not null)
+                    {
+                        myTeamUsers.Add(user);
+                    }
+                }
+            }
+
+
+            // Set Labels in UI
+            for (int i = 1; i < tempList.Count + 1; i++)
+            {
+                // Concat label name
+                string labelChamp = "MyTeam" + i + "Champ";
+                string labelPlayer = "MyTeam" + i + "Name";
+
                 if (instance is not null)
                 {
-                    var control = instance.Controls.Find(labelName, true).FirstOrDefault();
-                    if (control is not null)
+
+                    var champName = instance.Controls.Find(labelChamp, true).FirstOrDefault();
+                    var playerName = instance.Controls.Find(labelPlayer, true).FirstOrDefault();
+
+                    if (champName is not null)
                     {
-                        control.Text = tempList[i].ChampionId;
+                        champName.Text = tempList[i - 1].ChampionId;
                     }
-                    
+
+                    if (playerName is not null)
+                    {
+                        playerName.Text = myTeamUsers[i - 1].DisplayName;
+                    }
+
                 }
             }
 
@@ -189,8 +218,8 @@ namespace LeagueWinForm.Forms
 
             while (checkPhase)
             {
-                currentPhase = RiotApi.GetChampSelectPhase();
-
+                // This causes lag spike
+                currentPhase = await Task.FromResult(RiotApi.GetChampSelectPhase());
                 switch (currentPhase)
                 {
                     case "PLANNING":
@@ -228,8 +257,9 @@ namespace LeagueWinForm.Forms
                 }
                 oldPhase = currentPhase;
 
-                await Task.Delay(1000);
-
+                
+                await Task.Delay(5000);
+                Console.WriteLine("lag");
 
                 if (inGame == true)
                 {
@@ -270,7 +300,32 @@ namespace LeagueWinForm.Forms
 
         }
 
+        private class LCUPlayerInfo
+        {
+            public string? PuaccountId { get; set; }
+            public string? DisplayName { get; set; }
+            public string? InternalName { get; set; }
+            public string? NameChangeFlag { get; set; }
+            public string? PercentCompleteForNextLevel { get; set; }
+            public string? Privacy { get; set; }
+            public string? ProfileIconId { get; set; }
+            public string? Puuid { get; set; }
+            public RerollPointsList? RerollPoints { get; set; }
+            public string? SummonerId { get; set; }
+            public string? SummonerLevel { get; set; }
+            public string? Unnamed { get; set; }
+            public string? XpSinceLastLevel { get; set; }
+            public string? XpUntilNextLevel { get; set; }
+        }
 
+        public class RerollPointsList
+        {
+            public string? currentPoints { get; set; }
+            public string? maxRolls { get; set; }
+            public string? numberOfRolls { get; set; }
+            public string? pointsCostToRoll { get; set; }
+            public string? pointsToReroll { get; set; }
+        }
 
 
     }

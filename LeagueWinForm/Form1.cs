@@ -133,6 +133,7 @@ namespace LeagueWinForm
             // Start champ select checker
             Forms.champ_select.checkPhase = true;
             Forms.champ_select.GetChampSelectPhase();
+            
 
             // check if instance exists
             if (Forms.champ_select.instance is not null)
@@ -142,6 +143,7 @@ namespace LeagueWinForm
             else
             {
                 OpenChildForm(new Forms.champ_select(), sender);
+                Forms.champ_select.GetChampSelectPlayer();
             }          
         }
 

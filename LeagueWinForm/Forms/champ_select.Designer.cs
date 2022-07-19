@@ -55,11 +55,11 @@
             this.label19 = new System.Windows.Forms.Label();
             this.label20 = new System.Windows.Forms.Label();
             this.MyTeamNameLabel = new System.Windows.Forms.Label();
-            this.label21 = new System.Windows.Forms.Label();
-            this.label22 = new System.Windows.Forms.Label();
-            this.label23 = new System.Windows.Forms.Label();
-            this.label24 = new System.Windows.Forms.Label();
-            this.label25 = new System.Windows.Forms.Label();
+            this.MyTeam1Name = new System.Windows.Forms.Label();
+            this.MyTeam2Name = new System.Windows.Forms.Label();
+            this.MyTeam3Name = new System.Windows.Forms.Label();
+            this.MyTeam4Name = new System.Windows.Forms.Label();
+            this.MyTeam5Name = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // MyTeamLabel
@@ -304,61 +304,61 @@
             this.MyTeamNameLabel.TabIndex = 26;
             this.MyTeamNameLabel.Text = "Name : ";
             // 
-            // label21
+            // MyTeam1Name
             // 
-            this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(123, 172);
-            this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(44, 15);
-            this.label21.TabIndex = 27;
-            this.label21.Text = "label21";
+            this.MyTeam1Name.AutoSize = true;
+            this.MyTeam1Name.Location = new System.Drawing.Point(123, 172);
+            this.MyTeam1Name.Name = "MyTeam1Name";
+            this.MyTeam1Name.Size = new System.Drawing.Size(44, 15);
+            this.MyTeam1Name.TabIndex = 27;
+            this.MyTeam1Name.Text = "label21";
             // 
-            // label22
+            // MyTeam2Name
             // 
-            this.label22.AutoSize = true;
-            this.label22.Location = new System.Drawing.Point(123, 208);
-            this.label22.Name = "label22";
-            this.label22.Size = new System.Drawing.Size(44, 15);
-            this.label22.TabIndex = 28;
-            this.label22.Text = "label22";
+            this.MyTeam2Name.AutoSize = true;
+            this.MyTeam2Name.Location = new System.Drawing.Point(123, 208);
+            this.MyTeam2Name.Name = "MyTeam2Name";
+            this.MyTeam2Name.Size = new System.Drawing.Size(44, 15);
+            this.MyTeam2Name.TabIndex = 28;
+            this.MyTeam2Name.Text = "label22";
             // 
-            // label23
+            // MyTeam3Name
             // 
-            this.label23.AutoSize = true;
-            this.label23.Location = new System.Drawing.Point(123, 241);
-            this.label23.Name = "label23";
-            this.label23.Size = new System.Drawing.Size(44, 15);
-            this.label23.TabIndex = 29;
-            this.label23.Text = "label23";
+            this.MyTeam3Name.AutoSize = true;
+            this.MyTeam3Name.Location = new System.Drawing.Point(123, 241);
+            this.MyTeam3Name.Name = "MyTeam3Name";
+            this.MyTeam3Name.Size = new System.Drawing.Size(44, 15);
+            this.MyTeam3Name.TabIndex = 29;
+            this.MyTeam3Name.Text = "label23";
             // 
-            // label24
+            // MyTeam4Name
             // 
-            this.label24.AutoSize = true;
-            this.label24.Location = new System.Drawing.Point(123, 273);
-            this.label24.Name = "label24";
-            this.label24.Size = new System.Drawing.Size(44, 15);
-            this.label24.TabIndex = 30;
-            this.label24.Text = "label24";
+            this.MyTeam4Name.AutoSize = true;
+            this.MyTeam4Name.Location = new System.Drawing.Point(123, 273);
+            this.MyTeam4Name.Name = "MyTeam4Name";
+            this.MyTeam4Name.Size = new System.Drawing.Size(44, 15);
+            this.MyTeam4Name.TabIndex = 30;
+            this.MyTeam4Name.Text = "label24";
             // 
-            // label25
+            // MyTeam5Name
             // 
-            this.label25.AutoSize = true;
-            this.label25.Location = new System.Drawing.Point(123, 308);
-            this.label25.Name = "label25";
-            this.label25.Size = new System.Drawing.Size(44, 15);
-            this.label25.TabIndex = 31;
-            this.label25.Text = "label25";
+            this.MyTeam5Name.AutoSize = true;
+            this.MyTeam5Name.Location = new System.Drawing.Point(123, 308);
+            this.MyTeam5Name.Name = "MyTeam5Name";
+            this.MyTeam5Name.Size = new System.Drawing.Size(44, 15);
+            this.MyTeam5Name.TabIndex = 31;
+            this.MyTeam5Name.Text = "label25";
             // 
             // champ_select
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.label25);
-            this.Controls.Add(this.label24);
-            this.Controls.Add(this.label23);
-            this.Controls.Add(this.label22);
-            this.Controls.Add(this.label21);
+            this.Controls.Add(this.MyTeam5Name);
+            this.Controls.Add(this.MyTeam4Name);
+            this.Controls.Add(this.MyTeam3Name);
+            this.Controls.Add(this.MyTeam2Name);
+            this.Controls.Add(this.MyTeam1Name);
             this.Controls.Add(this.MyTeamNameLabel);
             this.Controls.Add(this.label20);
             this.Controls.Add(this.label19);
@@ -422,10 +422,10 @@
         private Label label19;
         private Label label20;
         private Label MyTeamNameLabel;
-        private Label label21;
-        private Label label22;
-        private Label label23;
-        private Label label24;
-        private Label label25;
+        private Label MyTeam1Name;
+        private Label MyTeam2Name;
+        private Label MyTeam3Name;
+        private Label MyTeam4Name;
+        private Label MyTeam5Name;
     }
 }
