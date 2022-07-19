@@ -29,7 +29,7 @@ namespace LeagueWinForm.Forms
         }
 
         // Set the banned champions in the hash set
-        public static void GetChampSelectBans()
+        public static async void GetChampSelectBans()
         {
             // Check if ban label has already been updated
             if (changeBanLabel is true)
@@ -69,7 +69,7 @@ namespace LeagueWinForm.Forms
             numBans = 0;
 
             // Do a Riot API Call
-            var json = RiotApi.GetChampSelectSession();
+            var json = await RiotApi.GetChampSelectSession();
 
             // Parse json file
             JObject jsonObj = JObject.Parse(json);
@@ -113,9 +113,9 @@ namespace LeagueWinForm.Forms
 
         // Set the player name and the champ they're playing
         // TODO: Ranks and Win rate?
-        public static void GetChampSelectPlayer()
+        public static async void GetChampSelectPlayer()
         {
-            // Check if ban label has already been updated
+            // Check if player label has already been updated
             if (changePlayerLabels is true)
             {
                 return;
@@ -123,9 +123,14 @@ namespace LeagueWinForm.Forms
 
 
             // Do a Riot API Call
-            //var json = RiotApi.GetChampSelectSession();
+            var json = await RiotApi.GetChampSelectSession();
 
-            var json = System.IO.File.ReadAllText(@"C:\Users\matte\source\repos\RiotGamesApi\LeagueWinForm\LeagueData\champLog43.json");
+            if (json == string.Empty)
+            {
+                return;
+            }
+
+            //var json = System.IO.File.ReadAllText(@"C:\Users\matte\source\repos\RiotGamesApi\LeagueWinForm\LeagueData\champLog43.json");
 
 
             // Parse json file
@@ -181,6 +186,7 @@ namespace LeagueWinForm.Forms
 
 
             // Set Labels in UI
+            // An invoke is required because it is running on a different thread
             for (int i = 1; i < tempList.Count + 1; i++)
             {
                 // Concat label name
@@ -195,18 +201,25 @@ namespace LeagueWinForm.Forms
 
                     if (champName is not null)
                     {
-                        champName.Text = tempList[i - 1].ChampionId;
+                        if (champName.InvokeRequired)
+                        {
+                            champName.Invoke(new Action(() => champName.Text = tempList[i - 1].ChampionId));
+                        }
+                        
                     }
 
                     if (playerName is not null)
                     {
-                        playerName.Text = myTeamUsers[i - 1].DisplayName;
-                    }
 
+                        if (playerName.InvokeRequired)
+                        {
+                            playerName.Invoke(new Action(() => playerName.Text = myTeamUsers[i - 1].DisplayName));
+                        }
+                    }
                 }
             }
-
-            changePlayerLabels = true;
+            // Need to count like for bans
+            //changePlayerLabels = true;
         }
 
 
@@ -219,16 +232,18 @@ namespace LeagueWinForm.Forms
             while (checkPhase)
             {
                 // This causes lag spike
-                currentPhase = await Task.FromResult(RiotApi.GetChampSelectPhase());
+                currentPhase = await RiotApi.GetChampSelectPhase();
+                Console.WriteLine(currentPhase);
                 switch (currentPhase)
                 {
                     case "PLANNING":
                         champ_select_phase = "PLANNING";
-                        GetChampSelectPlayer();
+
                         break;
 
                     case "BAN_PICK":
                         champ_select_phase = "BAN_PICK";
+                        GetChampSelectPlayer();
                         GetChampSelectBans();
                         break;
 
@@ -257,8 +272,11 @@ namespace LeagueWinForm.Forms
                 }
                 oldPhase = currentPhase;
 
-                
-                await Task.Delay(5000);
+                await Task.Run(() =>
+                {
+                    Thread.Sleep(2000);
+                });
+
                 Console.WriteLine("lag");
 
                 if (inGame == true)
@@ -326,8 +344,6 @@ namespace LeagueWinForm.Forms
             public string? pointsCostToRoll { get; set; }
             public string? pointsToReroll { get; set; }
         }
-
-
     }
 
 

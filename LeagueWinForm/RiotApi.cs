@@ -1,8 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System.Net;
-using System.Text;
 using System.Diagnostics;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace LeagueWinForm
@@ -86,14 +85,14 @@ namespace LeagueWinForm
                 process.StartInfo.Arguments = command;
                 process.StartInfo.UseShellExecute = false;
                 process.StartInfo.RedirectStandardOutput = true;
-                
+
                 // Start Process
                 process.Start();
 
                 // Read Output and store in string
                 StreamReader reader = process.StandardOutput;
                 output = reader.ReadToEnd();
-                
+
 
                 // Error if League client is not open
                 // TODO: Find better way / Warn user on UI 
@@ -122,20 +121,20 @@ namespace LeagueWinForm
             // Assign values
             client_port = port_match;
             client_pwd = pwd_match;
-            
+
             return;
         }
 
         // Live Game 
-        public static string GetChampSelectSession()
+        public static Task<string> GetChampSelectSession()
         {
             // Call private function to get port and password
             GetPortAndPwd();
-            
+
             // Encode HTTP header in Base64
             string encoded = System.Convert.ToBase64String(Encoding.GetEncoding("ISO-8859-1")
                                            .GetBytes(client_username + ":" + client_pwd));
-            
+
             // Api url for request
             var apiRequest = "https://127.0.0.1:" + client_port + "/lol-champ-select/v1/session";
 
@@ -148,25 +147,26 @@ namespace LeagueWinForm
             };
 
             // Create client with handler and address
-            HttpClient httpClient = new HttpClient(httpClientHandler) {
+            HttpClient httpClient = new HttpClient(httpClientHandler)
+            {
                 BaseAddress = new Uri(apiRequest)
             };
 
             // Add encoded request header
             httpClient.DefaultRequestHeaders.Add("Authorization", "Basic " + encoded);
 
+            HttpResponseMessage response = httpClient.GetAsync(apiRequest).Result;
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return Task.Run(() => string.Empty);
+            }
+
             // Make the request
-            var request = httpClient.GetAsync(apiRequest).Result;
-          
-            // Store Json as string 
-            var content = request.Content.ReadAsStringAsync().Result.ToString();
-            
-            return content;
-
-
+            return httpClient.GetStringAsync(apiRequest);
         }
 
-        private static string GetChampSelectSessionTimer()
+        public static Task<string> GetChampSelectSessionTimer()
         {
             // Call private function to get port and password
             GetPortAndPwd();
@@ -194,18 +194,26 @@ namespace LeagueWinForm
             // Add encoded request header
             httpClient.DefaultRequestHeaders.Add("Authorization", "Basic " + encoded);
 
-            // Make the request
-            var request = httpClient.GetAsync(apiRequest).Result;
+            HttpResponseMessage response = httpClient.GetAsync(apiRequest).Result;
 
-            // Store Json as string 
-            var content = request.Content.ReadAsStringAsync().Result.ToString();
-            
-            return content;
+            if (!response.IsSuccessStatusCode)
+            {
+                return Task.Run(() => string.Empty);
+            }
+
+            // Make the request
+            return httpClient.GetStringAsync(apiRequest);
         }
 
-        public static string GetChampSelectPhase()
+        public static async Task<string> GetChampSelectPhase()
         {
-            string timerJson = GetChampSelectSessionTimer();
+            string timerJson = await GetChampSelectSessionTimer();
+
+            if (timerJson == string.Empty)
+            {
+                return "NOT_IN_CS";
+            }
+
             string phase = "";
 
             JObject jsonObj = JObject.Parse(timerJson);
@@ -231,7 +239,7 @@ namespace LeagueWinForm
                                            .GetBytes(client_username + ":" + client_pwd));
 
             // Api url for request
-            var apiRequest = "https://127.0.0.1:" + client_port + "/lol-summoner/v1/summoners/" +id;
+            var apiRequest = "https://127.0.0.1:" + client_port + "/lol-summoner/v1/summoners/" + id;
 
             // Create a HttpClientHandler
             var httpClientHandler = new HttpClientHandler();

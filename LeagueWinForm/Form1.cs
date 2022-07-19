@@ -128,11 +128,11 @@ namespace LeagueWinForm
             OpenChildForm(new Forms.live_game(), sender);
         }
 
-        private void btn_3_Click(object sender, EventArgs e)
+        private async void btn_3_Click(object sender, EventArgs e)
         {
             // Start champ select checker
             Forms.champ_select.checkPhase = true;
-            Forms.champ_select.GetChampSelectPhase();
+            await Task.Run(() => Forms.champ_select.GetChampSelectPhase());
             
 
             // check if instance exists
