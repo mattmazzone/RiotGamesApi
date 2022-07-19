@@ -130,19 +130,23 @@ namespace LeagueWinForm
 
         private async void btn_3_Click(object sender, EventArgs e)
         {
-            // Start champ select checker
-            Forms.champ_select.checkPhase = true;
-            await Task.Run(() => Forms.champ_select.GetChampSelectPhase());
-            
-
             // check if instance exists
             if (Forms.champ_select.instance is not null)
             {
                 OpenChildForm(Forms.champ_select.instance, sender);
+
+                // Start champ select checker
+                Forms.champ_select.checkPhase = true;
+                await Task.Run(() => Forms.champ_select.GetChampSelectPhase());
             }
             else
             {
                 OpenChildForm(new Forms.champ_select(), sender);
+
+                // Start champ select checker
+                Forms.champ_select.checkPhase = true;
+                await Task.Run(() => Forms.champ_select.GetChampSelectPhase());
+
                 Forms.champ_select.GetChampSelectPlayer();
             }          
         }

@@ -205,7 +205,7 @@ namespace LeagueWinForm.Forms
                         {
                             champName.Invoke(new Action(() => champName.Text = tempList[i - 1].ChampionId));
                         }
-                        
+
                     }
 
                     if (playerName is not null)
@@ -222,6 +222,40 @@ namespace LeagueWinForm.Forms
             //changePlayerLabels = true;
         }
 
+        public static async void GetGameMode()
+        {
+           
+            var json = await RiotApi.GetLobbyGameMode();
+
+           
+            if (json == string.Empty)
+            {
+                return;
+            }
+
+            // Parse json file
+            JObject jsonObj = JObject.Parse(json);
+
+            // Get Game Mode from json
+            JToken? jsonToken = jsonObj["gameConfig"]?["gameMode"];
+            if (jsonToken is null)
+            {
+                Console.WriteLine("Json token is null in GetGameMode()");
+                return;
+            }
+            string gameType = jsonToken.ToString();
+
+            // Set Labels in UI
+            if (gameType is not null && instance is not null)
+            {
+                if (instance.GameModeValue.InvokeRequired)
+                {
+                    instance.GameModeValue.Invoke(new Action(() => instance.GameModeValue.Text = gameType));
+                }
+            }
+
+        }
+
 
         public async static void GetChampSelectPhase()
         {
@@ -233,7 +267,6 @@ namespace LeagueWinForm.Forms
             {
                 // This causes lag spike
                 currentPhase = await RiotApi.GetChampSelectPhase();
-                Console.WriteLine(currentPhase);
                 switch (currentPhase)
                 {
                     case "PLANNING":
@@ -243,6 +276,7 @@ namespace LeagueWinForm.Forms
 
                     case "BAN_PICK":
                         champ_select_phase = "BAN_PICK";
+                        GetGameMode();
                         GetChampSelectPlayer();
                         GetChampSelectBans();
                         break;
@@ -268,16 +302,27 @@ namespace LeagueWinForm.Forms
 
                 if (oldPhase != currentPhase)
                 {
-                    Console.WriteLine("Checking Champ Select Phase :" + champ_select_phase);
+                    if (instance is not null)
+                    {
+
+                        if (instance.PhaseValue.InvokeRequired)
+                        {
+                            instance.PhaseValue.Invoke(new Action(() => instance.PhaseValue.Text = champ_select_phase));
+                        }
+
+                    }
+
                 }
                 oldPhase = currentPhase;
 
+
+                // Delay
                 await Task.Run(() =>
                 {
                     Thread.Sleep(2000);
                 });
 
-                Console.WriteLine("lag");
+
 
                 if (inGame == true)
                 {

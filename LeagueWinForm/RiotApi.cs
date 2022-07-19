@@ -13,8 +13,8 @@ namespace LeagueWinForm
         private static string? apiKey;
         private static string? region;
 
-        private static string? client_port;
-        private static string? client_pwd;
+        private static string? client_port = "";
+        private static string? client_pwd = "";
         private static string? client_username = "riot";
 
         public static void LoadChampionDictionnary()
@@ -69,8 +69,15 @@ namespace LeagueWinForm
         }
 
         // WMIC Commands
-        public static void GetPortAndPwd()
+        public static bool GetPortAndPwd()
         {
+            //Check if port and pwd already found
+            if(client_port != "" && client_pwd != "")
+            {
+                return true;
+            }
+
+
             // Command to run in Cmd Prompt
             string command = "/C wmic PROCESS WHERE name='LeagueClientUx.exe' GET commandline";
 
@@ -99,7 +106,7 @@ namespace LeagueWinForm
                 if (output.Length < 10)
                 {
                     Console.WriteLine("League Client not detected");
-                    return;
+                    return false;
                 }
 
 
@@ -122,14 +129,17 @@ namespace LeagueWinForm
             client_port = port_match;
             client_pwd = pwd_match;
 
-            return;
+            return true;
         }
 
         // Live Game 
         public static Task<string> GetChampSelectSession()
         {
             // Call private function to get port and password
-            GetPortAndPwd();
+            if (!GetPortAndPwd())
+            {
+                return Task.Run(() => string.Empty);
+            }
 
             // Encode HTTP header in Base64
             string encoded = System.Convert.ToBase64String(Encoding.GetEncoding("ISO-8859-1")
@@ -169,7 +179,10 @@ namespace LeagueWinForm
         public static Task<string> GetChampSelectSessionTimer()
         {
             // Call private function to get port and password
-            GetPortAndPwd();
+            if (!GetPortAndPwd())
+            {
+                return Task.Run(() => string.Empty);
+            }
 
             // Encode HTTP header in Base64
             string encoded = System.Convert.ToBase64String(Encoding.GetEncoding("ISO-8859-1")
@@ -232,7 +245,10 @@ namespace LeagueWinForm
         public static string GetSummonerById(string id)
         {
             // Call private function to get port and password
-            GetPortAndPwd();
+            if (!GetPortAndPwd())
+            {
+                return string.Empty;
+            }
 
             // Encode HTTP header in Base64
             string encoded = System.Convert.ToBase64String(Encoding.GetEncoding("ISO-8859-1")
@@ -264,6 +280,51 @@ namespace LeagueWinForm
             var content = request.Content.ReadAsStringAsync().Result.ToString();
 
             return content;
+        }
+
+
+        public static Task<string> GetLobbyGameMode()
+        {
+            // Call private function to get port and password
+            if (!GetPortAndPwd())
+            {
+                return Task.Run(() => string.Empty);
+            }
+
+            // Encode HTTP header in Base64
+            string encoded = System.Convert.ToBase64String(Encoding.GetEncoding("ISO-8859-1")
+                                           .GetBytes(client_username + ":" + client_pwd));
+
+            // Api url for request
+            var apiRequest = "https://127.0.0.1:" + client_port + "/lol-lobby/v2/lobby";
+
+            
+            // Create a HttpClientHandler
+            var httpClientHandler = new HttpClientHandler();
+            httpClientHandler.ServerCertificateCustomValidationCallback = (message, cert, chain, sslPolicyErrors) =>
+            {
+                return true;
+            };
+
+            // Create client with handler and address
+            HttpClient httpClient = new HttpClient(httpClientHandler)
+            {
+                BaseAddress = new Uri(apiRequest)
+            };
+
+            // Add encoded request header
+            httpClient.DefaultRequestHeaders.Add("Authorization", "Basic " + encoded);
+
+            HttpResponseMessage response = httpClient.GetAsync(apiRequest).Result;
+
+            if (!response.IsSuccessStatusCode)
+            {
+                Console.WriteLine("yikes");
+                return Task.Run(() => string.Empty);
+            }
+
+            // Make the request
+            return httpClient.GetStringAsync(apiRequest);
         }
     }
 }
