@@ -7,13 +7,13 @@ namespace LeagueWinForm.Forms
     {
         // Use Hash Set because list should be unique
         private static HashSet<string> bannedChampions = new HashSet<string>();
-        private static int numBans = 0;
+
 
         private static string champ_select_phase = "";
 
         private static bool inGame = false;
         private static bool changeBanLabel = false;
-        private static bool changePlayerLabels = false;
+        private static bool changePlayerAndChampLabels = false;
 
         public static bool checkPhase = true;
 
@@ -31,39 +31,44 @@ namespace LeagueWinForm.Forms
         // Set the banned champions in the hash set
         public static async void GetChampSelectBans()
         {
+            Console.WriteLine("checking bans");
             // Check if ban label has already been updated
+            int numBans = 0;
             if (changeBanLabel is true)
             {
+                
                 return;
             }
 
             // Check if all bans are done
-            if (numBans == 10)
+            string labelText = "";
+
+            // Prepare string for UI label
+            foreach (string name in bannedChampions)
             {
-                string labelText = "";
-
-                // Prepare string for UI label
-                foreach (string name in bannedChampions)
+                //Console.WriteLine(name);
+                // Condition for last element comma
+                if (name == bannedChampions.ElementAt(bannedChampions.Count - 1))
                 {
-                    // Condition for last element comma
-                    if (name == bannedChampions.ElementAt(bannedChampions.Count - 1))
-                    {
-                        labelText = labelText + name;
-                    }
-                    else
-                    {
-                        labelText = labelText + name + ", ";
-                    }
-
+                    labelText = labelText + name;
                 }
-                // Change Banned champ label in UI
-                if (instance is not null)
+                else
                 {
-                    instance.BanListValues.Text = labelText;
-                    changeBanLabel = true;
+                    labelText = labelText + name + ", ";
                 }
-                return;
+
             }
+            // Change Banned champ label in UI
+            if (instance is not null)
+            {
+                if (instance.BanListValues.InvokeRequired)
+                {
+                    instance.BanListValues.Invoke(new Action(() => instance.BanListValues.Text = labelText));
+                    //changeBanLabel = true;
+                }
+            }
+            
+
 
             // Reset banned champ counter
             numBans = 0;
@@ -82,15 +87,18 @@ namespace LeagueWinForm.Forms
                 return;
             }
             string result = jsonToken.ToString();
+            Console.WriteLine(result);
+
             List<ChampionBan>? tempList = new List<ChampionBan>();
             tempList = JsonConvert.DeserializeObject<List<ChampionBan>>(result);
 
             // Check if successful Deserialize
             if (tempList is null)
             {
+                Console.WriteLine("Templist null");
                 return;
             }
-
+            Console.WriteLine("yo");
             // Find Id in dictionary and add champion name in HashSet 
             foreach (ChampionBan ban in tempList)
             {
@@ -104,11 +112,17 @@ namespace LeagueWinForm.Forms
                         if (RiotApi.championList.TryGetValue(key, out string? value))
                         {
                             ban.ChampionId = value;
+                            bannedChampions.Add(ban.ChampionId);
+                            Console.WriteLine(ban.ChampionId);
                         }
-                        bannedChampions.Add(ban.ChampionId);
+
+                        
                     }
                 }
             }
+
+
+
         }
 
         // Set the player name and the champ they're playing
@@ -116,11 +130,11 @@ namespace LeagueWinForm.Forms
         public static async void GetChampSelectPlayer()
         {
             // Check if player label has already been updated
-            if (changePlayerLabels is true)
+            int championCounter = 0;
+            if (changePlayerAndChampLabels is true)
             {
                 return;
             }
-
 
             // Do a Riot API Call
             var json = await RiotApi.GetChampSelectSession();
@@ -130,13 +144,10 @@ namespace LeagueWinForm.Forms
                 return;
             }
 
-            //var json = System.IO.File.ReadAllText(@"C:\Users\matte\source\repos\RiotGamesApi\LeagueWinForm\LeagueData\champLog43.json");
-
-
             // Parse json file
             JObject jsonObj = JObject.Parse(json);
 
-            // ["actions"][0] returns the list of 10 actions (bans)
+            // returns myteam
             JToken? jsonToken = jsonObj["myTeam"];
             if (jsonToken is null)
             {
@@ -145,6 +156,7 @@ namespace LeagueWinForm.Forms
             }
             string result = jsonToken.ToString();
 
+            // List of Players
             List<TeamPlayer>? tempList = new List<TeamPlayer>();
             tempList = JsonConvert.DeserializeObject<List<TeamPlayer>>(result);
 
@@ -155,19 +167,18 @@ namespace LeagueWinForm.Forms
             }
 
             // Find Id in dictionary and add champion name in HashSet 
-            foreach (TeamPlayer ban in tempList)
+            foreach (TeamPlayer champion in tempList)
             {
-                if (ban.ChampionId is not null && RiotApi.championList is not null)
+                if (champion.ChampionId is not null && RiotApi.championList is not null)
                 {
-                    int key = Int32.Parse(ban.ChampionId);
+                    int key = Int32.Parse(champion.ChampionId);
 
                     if (RiotApi.championList.TryGetValue(key, out string? value))
                     {
-                        ban.ChampionId = value;
+                        champion.ChampionId = value;
+                        championCounter++;
                     }
-                    bannedChampions.Add(ban.ChampionId);
                 }
-
             }
 
             // Store players in match in a list 
@@ -176,7 +187,7 @@ namespace LeagueWinForm.Forms
             {
                 if (player.SummonerId is not null)
                 {
-                    var user = JsonConvert.DeserializeObject<LCUPlayerInfo>(RiotApi.GetSummonerById(player.SummonerId));
+                    var user = JsonConvert.DeserializeObject<LCUPlayerInfo>(RiotApi.GetSummonerById(player.SummonerId).Result);
                     if (user is not null)
                     {
                         myTeamUsers.Add(user);
@@ -195,7 +206,7 @@ namespace LeagueWinForm.Forms
 
                 if (instance is not null)
                 {
-
+                    // Find labels in UI
                     var champName = instance.Controls.Find(labelChamp, true).FirstOrDefault();
                     var playerName = instance.Controls.Find(labelPlayer, true).FirstOrDefault();
 
@@ -210,7 +221,6 @@ namespace LeagueWinForm.Forms
 
                     if (playerName is not null)
                     {
-
                         if (playerName.InvokeRequired)
                         {
                             playerName.Invoke(new Action(() => playerName.Text = myTeamUsers[i - 1].DisplayName));
@@ -218,16 +228,17 @@ namespace LeagueWinForm.Forms
                     }
                 }
             }
-            // Need to count like for bans
-            //changePlayerLabels = true;
+
+            if (championCounter == 5)
+            {
+                changePlayerAndChampLabels = true;
+            }
         }
 
         public static async void GetGameMode()
         {
-           
             var json = await RiotApi.GetLobbyGameMode();
 
-           
             if (json == string.Empty)
             {
                 return;
@@ -262,10 +273,8 @@ namespace LeagueWinForm.Forms
             string currentPhase = "";
             string oldPhase = "";
 
-
             while (checkPhase)
             {
-                // This causes lag spike
                 currentPhase = await RiotApi.GetChampSelectPhase();
                 switch (currentPhase)
                 {
@@ -381,7 +390,7 @@ namespace LeagueWinForm.Forms
             public string? XpUntilNextLevel { get; set; }
         }
 
-        public class RerollPointsList
+        private class RerollPointsList
         {
             public string? currentPoints { get; set; }
             public string? maxRolls { get; set; }

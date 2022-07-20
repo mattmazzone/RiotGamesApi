@@ -68,11 +68,12 @@ namespace LeagueWinForm
             return apiRequest;
         }
 
+
         // WMIC Commands
         public static bool GetPortAndPwd()
         {
             //Check if port and pwd already found
-            if(client_port != "" && client_pwd != "")
+            if (client_port != "" && client_pwd != "")
             {
                 return true;
             }
@@ -227,7 +228,6 @@ namespace LeagueWinForm
                 return "NOT_IN_CS";
             }
 
-            string phase = "";
 
             JObject jsonObj = JObject.Parse(timerJson);
 
@@ -237,17 +237,16 @@ namespace LeagueWinForm
                 // Console.WriteLine("Json token is null in GetChampSelectPhase()");
                 return "NOT_IN_CS";
             }
-            phase = jsonToken.ToString();
 
-            return phase;
+            return jsonToken.ToString();
         }
 
-        public static string GetSummonerById(string id)
+        public static Task<string> GetSummonerById(string id)
         {
             // Call private function to get port and password
             if (!GetPortAndPwd())
             {
-                return string.Empty;
+                return Task.Run(() => string.Empty);
             }
 
             // Encode HTTP header in Base64
@@ -273,16 +272,18 @@ namespace LeagueWinForm
             // Add encoded request header
             httpClient.DefaultRequestHeaders.Add("Authorization", "Basic " + encoded);
 
+
+            HttpResponseMessage response = httpClient.GetAsync(apiRequest).Result;
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return Task.Run(() => string.Empty);
+            }
+
+
             // Make the request
-            var request = httpClient.GetAsync(apiRequest).Result;
-
-            // Store Json as string 
-            var content = request.Content.ReadAsStringAsync().Result.ToString();
-
-            return content;
+            return httpClient.GetStringAsync(apiRequest);
         }
-
-
         public static Task<string> GetLobbyGameMode()
         {
             // Call private function to get port and password
@@ -298,7 +299,7 @@ namespace LeagueWinForm
             // Api url for request
             var apiRequest = "https://127.0.0.1:" + client_port + "/lol-lobby/v2/lobby";
 
-            
+
             // Create a HttpClientHandler
             var httpClientHandler = new HttpClientHandler();
             httpClientHandler.ServerCertificateCustomValidationCallback = (message, cert, chain, sslPolicyErrors) =>
