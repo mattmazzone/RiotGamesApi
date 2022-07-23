@@ -14,7 +14,7 @@ namespace LeagueWinForm.Forms
         private static bool inGame = false;
         private static bool changeBanLabel = false;
         private static bool changePlayerAndChampLabels = false;
-
+        private static int banUiCount = 0;
         public static bool checkPhase = true;
 
 
@@ -34,52 +34,23 @@ namespace LeagueWinForm.Forms
             Console.WriteLine("checking bans");
             // Check if ban label has already been updated
             int numBans = 0;
-            if (changeBanLabel is true)
+
+            if (banUiCount == 10)
             {
-                
                 return;
             }
 
-            // Check if all bans are done
-            string labelText = "";
-
-            // Prepare string for UI label
-            foreach (string name in bannedChampions)
-            {
-                //Console.WriteLine(name);
-                // Condition for last element comma
-                if (name == bannedChampions.ElementAt(bannedChampions.Count - 1))
-                {
-                    labelText = labelText + name;
-                }
-                else
-                {
-                    labelText = labelText + name + ", ";
-                }
-
-            }
-            // Change Banned champ label in UI
-            if (instance is not null)
-            {
-                if (instance.BanListValues.InvokeRequired)
-                {
-                    instance.BanListValues.Invoke(new Action(() => instance.BanListValues.Text = labelText));
-                    //changeBanLabel = true;
-                }
-            }
             
-
-
-            // Reset banned champ counter
-            numBans = 0;
+            
 
             // Do a Riot API Call
             var json = await RiotApi.GetChampSelectSession();
+            //var json = File.ReadAllText("..\\..\\..\\LeagueData\\champLog43.json");
 
             // Parse json file
             JObject jsonObj = JObject.Parse(json);
 
-            // ["actions"][0] returns the list of 10 actions (bans)
+            // ["actions"][0] returns the list of 10 or less actions (bans in draft pick)
             JToken? jsonToken = jsonObj["actions"]?[0];
             if (jsonToken is null)
             {
@@ -87,7 +58,6 @@ namespace LeagueWinForm.Forms
                 return;
             }
             string result = jsonToken.ToString();
-            Console.WriteLine(result);
 
             List<ChampionBan>? tempList = new List<ChampionBan>();
             tempList = JsonConvert.DeserializeObject<List<ChampionBan>>(result);
@@ -98,7 +68,7 @@ namespace LeagueWinForm.Forms
                 Console.WriteLine("Templist null");
                 return;
             }
-            Console.WriteLine("yo");
+           
             // Find Id in dictionary and add champion name in HashSet 
             foreach (ChampionBan ban in tempList)
             {
@@ -121,8 +91,38 @@ namespace LeagueWinForm.Forms
                 }
             }
 
+            if (numBans > banUiCount)
+            {
+                // Check if all bans are done
+                string labelText = "";
 
+                // Prepare string for UI label
+                foreach (string name in bannedChampions)
+                {
+                    //Console.WriteLine(name);
+                    // Condition for last element comma
+                    if (name == bannedChampions.ElementAt(bannedChampions.Count - 1))
+                    {
+                        labelText = labelText + name;
+                    }
+                    else
+                    {
+                        labelText = labelText + name + ", ";
+                    }
 
+                }
+                // Change Banned champ label in UI
+                if (instance is not null)
+                {
+                    if (instance.BanListValues.InvokeRequired)
+                    {
+                        instance.BanListValues.Invoke(new Action(() => instance.BanListValues.Text = labelText));
+                        //changeBanLabel = true;
+                    }
+                }
+                banUiCount = numBans;
+            }
+            
         }
 
         // Set the player name and the champ they're playing
